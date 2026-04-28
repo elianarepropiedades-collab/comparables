@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparables · Eliana Ré</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --chalk: #F5F0E8;
+    --linen: #EDE8DC;
+    --olive: #7A8C6E;
+    --olive-d: #5C6E52;
+    --olive-l: #A8B89A;
+    --ochre: #C9A85C;
+    --ochre-l: #E8D5A3;
+    --brick: #B85C38;
+    --brick-d: #9A4A2C;
+    --bark: #5C4A3A;
+    --bark-l: #8C7B6E;
+    --ink: #2C2018;
+    --surface: #FDFAF5;
+    --border: #D8D0C4;
+    --border-l: #EAE4DA;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--chalk);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--chalk);
+  }
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 3rem 2.5rem;
+    width: 360px;
+    text-align: center;
+  }
+  .login-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    color: var(--bark-l);
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .login-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--bark);
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+  }
+  .login-sub {
+    font-size: 0.8rem;
+    color: var(--bark-l);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .login-card input[type=password] {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 1rem;
+    background: var(--chalk);
+    color: var(--ink);
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .login-card input[type=password]:focus { border-color: var(--olive); }
+  .login-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--olive);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .login-btn:hover { background: var(--olive-d); }
+  .login-error {
+    color: var(--brick);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    min-height: 1.2em;
+  }
+  .login-leaf {
+    display: block;
+    margin: 0 auto 1.5rem;
+    opacity: 0.25;
+  }
+
+  /* ── APP ── */
+  #app { display: none; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .header-brand { display: flex; flex-direction: column; }
+  .header-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    color: var(--bark-l);
+    text-transform: uppercase;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--bark);
+    line-height: 1.1;
+  }
+  .header-actions { display: flex; gap: 8px; align-items: center; }
+
+  .btn {
+    padding: 0.5rem 1.1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 400;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--ink);
+    letter-spacing: 0.04em;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .btn:hover { background: var(--linen); border-color: var(--bark-l); }
+  .btn-primary { background: var(--olive); color: #fff; border-color: var(--olive); }
+  .btn-primary:hover { background: var(--olive-d); border-color: var(--olive-d); }
+  .btn-brick { background: var(--brick); color: #fff; border-color: var(--brick); }
+  .btn-brick:hover { background: var(--brick-d); border-color: var(--brick-d); }
+  .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.78rem; }
+  .btn-logout { font-size: 0.75rem; color: var(--bark-l); border-color: transparent; background: transparent; }
+  .btn-logout:hover { color: var(--brick); background: transparent; border-color: transparent; }
+
+  main { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem 3rem; }
+
+  /* stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border-l);
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bark-l);
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: var(--bark);
+    line-height: 1;
+  }
+
+  /* toolbar */
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .toolbar input[type=text],
+  .toolbar select {
+    padding: 0.5rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.84rem;
+    background: var(--surface);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .toolbar input[type=text] { flex: 1; min-width: 200px; }
+  .toolbar input[type=text]:focus,
+  .toolbar select:focus { border-color: var(--olive); }
+
+  /* table */
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead { position: sticky; top: 60px; }
+  th {
+    background: var(--linen);
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--bark-l);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { color: var(--bark); }
+  th.sort-asc::after { content: ' ↑'; opacity: 0.6; }
+  th.sort-desc::after { content: ' ↓'; opacity: 0.6; }
+  td {
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--border-l);
+    vertical-align: middle;
+    white-space: nowrap;
+    color: var(--ink);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #F7F2EA; }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+  .b-casa     { background: #E8D5A3; color: #6B4C10; }
+  .b-depto    { background: #D0DCC8; color: #2E4A1C; }
+  .b-terreno  { background: #E0D4C8; color: #4A3420; }
+  .b-local    { background: #F0D4C8; color: #7A2C10; }
+  .b-ph       { background: #D4D8E8; color: #1C2850; }
+  .b-otro     { background: #E0DCDC; color: #3C3030; }
+  .b-muybueno { background: #C8DCC0; color: #1A3C10; }
+  .b-bueno    { background: #E8D5A3; color: #5C3C08; }
+  .b-regular  { background: #F0D4C8; color: #6C2810; }
+  .b-refac    { background: #EDD0C8; color: #8C3018; }
+
+  .precio-cell { font-weight: 500; color: var(--bark); }
+  .muted { color: var(--bark-l); }
+  .extras-cell { font-size: 0.76rem; color: var(--bark-l); max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+
+  .empty {
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--bark-l);
+    font-size: 0.9rem;
+    line-height: 2;
+  }
+  .empty strong { display: block; font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--bark); margin-bottom: 0.5rem; }
+
+  /* ── MODAL ── */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(44,32,24,0.45);
+    z-index: 200;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    width: 720px;
+    max-width: 100%;
+    padding: 2rem;
+    position: relative;
+  }
+  .modal-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--bark);
+    margin-bottom: 1.5rem;
+  }
+  .section-sep {
+    grid-column: 1 / -1;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bark-l);
+    border-bottom: 1px solid var(--border-l);
+    padding-bottom: 4px;
+    margin-top: 0.5rem;
+  }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group.full { grid-column: 1 / -1; }
+  .form-group label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--bark-l);
+    font-weight: 400;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.88rem;
+    background: var(--chalk);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: var(--olive); background: var(--surface); }
+  .form-group textarea { min-height: 72px; resize: vertical; }
+  .checkbox-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding: 0.4rem 0;
+  }
+  .checkbox-row label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.84rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--ink);
+    cursor: pointer;
+    font-weight: 400;
+  }
+  .checkbox-row input[type=checkbox] { accent-color: var(--olive); width: 15px; height: 15px; }
+  .form-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-l);
+    padding-top: 1.25rem;
+  }
+
+  /* detail modal */
+  .detail-section { margin-top: 1.25rem; }
+  .detail-section-title {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--bark-l);
+    border-bottom: 1px solid var(--border-l);
+    padding-bottom: 4px;
+    margin-bottom: 0.75rem;
+  }
+  .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; }
+  .det-label { font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--bark-l); margin-bottom: 2px; }
+  .det-val { font-size: 0.9rem; font-weight: 400; color: var(--ink); }
+  .det-val.precio { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; color: var(--bark); }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+  .tag {
+    background: var(--linen);
+    border: 1px solid var(--border-l);
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 0.76rem;
+    color: var(--bark);
+  }
+
+  /* ornament */
+  .ornament {
+    width: 32px;
+    height: 1px;
+    background: var(--ochre);
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 8px;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 640px) {
+    main { padding: 1rem; }
+    header { padding: 0.75rem 1rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .detail-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <svg class="login-leaf" width="48" height="48" viewBox="0 0 48 48" fill="none">
+      <path d="M24 4C24 4 8 12 8 26C8 35.94 15.16 44 24 44C32.84 44 40 35.94 40 26C40 12 24 4 24 4Z" fill="#7A8C6E" opacity="0.5"/>
+      <path d="M24 44V20" stroke="#5C4A3A" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div class="login-logo">Eliana Ré · Servicios Inmobiliarios</div>
+    <div class="login-title">Comparables</div>
+    <div class="login-sub">Base de datos de tasación</div>
+    <input type="password" id="pwd-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter')checkPwd()">
+    <button class="login-btn" onclick="checkPwd()">Ingresar</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <div class="header-brand">
+      <span class="header-logo">Eliana Ré · Servicios Inmobiliarios</span>
+      <span class="header-title">Comparables <span class="ornament"></span> Sunchales</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-sm" onclick="exportCSV()">Exportar CSV</button>
+      <button class="btn btn-primary btn-sm" onclick="openForm()">+ Nueva propiedad</button>
+      <button class="btn btn-logout btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="stats-row" id="stats"></div>
+
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="Buscar por dirección, barrio, fuente…" oninput="renderTable()">
+      <select id="filterTipo" onchange="renderTable()">
+        <option value="">Todos los tipos</option>
+        <option>Casa</option>
+        <option>Departamento</option>
+        <option>PH</option>
+        <option>Terreno</option>
+        <option>Local comercial</option>
+        <option>Otro</option>
+      </select>
+      <select id="filterEstado" onchange="renderTable()">
+        <option value="">Todo estado</option>
+        <option value="Muy bueno">Muy bueno</option>
+        <option value="Bueno">Bueno</option>
+        <option value="Regular">Regular</option>
+        <option value="A refaccionar">A refaccionar</option>
+      </select>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th onclick="sortBy('tipo')">Tipo</th>
+            <th onclick="sortBy('domicilio')" style="min-width:160px">Domicilio</th>
+            <th onclick="sortBy('barrio')">Barrio</th>
+            <th onclick="sortBy('supTerreno')" style="text-align:right">Terreno m²</th>
+            <th onclick="sortBy('supCubierta')" style="text-align:right">Cubierta m²</th>
+            <th onclick="sortBy('habitaciones')" style="text-align:center">Hab.</th>
+            <th onclick="sortBy('banos')" style="text-align:center">Baños</th>
+            <th>Extras</th>
+            <th onclick="sortBy('estado')">Estado</th>
+            <th onclick="sortBy('antiguedad')" style="text-align:center">Antiq.</th>
+            <th onclick="sortBy('precioNum')" style="text-align:right">Precio pub.</th>
+            <th onclick="sortBy('fecha')">Relevado</th>
+            <th onclick="sortBy('fuente')">Fuente</th>
+            <th style="cursor:default"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- FORM MODAL -->
+<div class="modal-bg" id="formModal">
+  <div class="modal">
+    <p class="modal-title" id="formTitle">Nueva propiedad comparable</p>
+    <div class="form-grid">
+      <div class="section-sep">Identificación</div>
+
+      <div class="form-group">
+        <label>Tipo de propiedad *</label>
+        <select id="f-tipo">
+          <option value="">Seleccionar…</option>
+          <option>Casa</option><option>Departamento</option>
+          <option>PH</option><option>Terreno</option>
+          <option>Local comercial</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Barrio / Zona</label>
+        <input type="text" id="f-barrio" placeholder="ej. Centro, Belgrano…">
+      </div>
+      <div class="form-group full">
+        <label>Domicilio *</label>
+        <input type="text" id="f-domicilio" placeholder="Calle y número">
+      </div>
+      <div class="form-group">
+        <label>Fuente (portal / inmobiliaria)</label>
+        <input type="text" id="f-fuente" placeholder="ej. Zonaprop, García Prop.">
+      </div>
+      <div class="form-group">
+        <label>Fecha de relevamiento</label>
+        <input type="date" id="f-fecha">
+      </div>
+
+      <div class="section-sep">Superficies y medidas</div>
+
+      <div class="form-group">
+        <label>Superficie terreno (m²)</label>
+        <input type="number" id="f-supTerreno" placeholder="m²" min="0">
+      </div>
+      <div class="form-group">
+        <label>Superficie cubierta (m²)</label>
+        <input type="number" id="f-supCubierta" placeholder="m²" min="0">
+      </div>
+      <div class="form-group">
+        <label>Frente del terreno (m)</label>
+        <input type="number" id="f-frente" placeholder="metros" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Fondo del terreno (m)</label>
+        <input type="number" id="f-fondo" placeholder="metros" min="0" step="0.01">
+      </div>
+
+      <div class="section-sep">Distribución</div>
+
+      <div class="form-group">
+        <label>Habitaciones</label>
+        <input type="number" id="f-habitaciones" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Baños completos</label>
+        <input type="number" id="f-banos" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Toilettes</label>
+        <input type="number" id="f-toilettes" min="0" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label>Cocheras</label>
+        <input type="number" id="f-cocheras" min="0" placeholder="0">
+      </div>
+      <div class="form-group full">
+        <label>Características adicionales</label>
+        <div class="checkbox-row">
+          <label><input type="checkbox" id="f-patio"> Patio</label>
+          <label><input type="checkbox" id="f-pileta"> Pileta</label>
+          <label><input type="checkbox" id="f-garage"> Garage</label>
+          <label><input type="checkbox" id="f-quincho"> Quincho</label>
+          <label><input type="checkbox" id="f-lavadero"> Lavadero</label>
+          <label><input type="checkbox" id="f-baulera"> Baulera</label>
+          <label><input type="checkbox" id="f-gas"> Gas natural</label>
+          <label><input type="checkbox" id="f-alarma"> Alarma</label>
+          <label><input type="checkbox" id="f-calefaccion"> Calefacción central</label>
+          <label><input type="checkbox" id="f-aireacond"> Aire acondicionado</label>
+        </div>
+      </div>
+
+      <div class="section-sep">Estado y precio</div>
+
+      <div class="form-group">
+        <label>Estado de conservación</label>
+        <select id="f-estado">
+          <option value="">Sin dato</option>
+          <option>Muy bueno</option>
+          <option>Bueno</option>
+          <option>Regular</option>
+          <option>A refaccionar</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Antigüedad (años aprox.)</label>
+        <input type="number" id="f-antiguedad" min="0" placeholder="si se conoce">
+      </div>
+      <div class="form-group">
+        <label>Precio de publicación</label>
+        <input type="text" id="f-precio" placeholder="ej. 85.000">
+      </div>
+      <div class="form-group">
+        <label>Moneda</label>
+        <select id="f-moneda">
+          <option value="USD">USD</option>
+          <option value="ARS">ARS</option>
+        </select>
+      </div>
+
+      <div class="form-group full">
+        <label>Observaciones</label>
+        <textarea id="f-obs" placeholder="Notas libres, estado de publicación, link, detalles especiales…"></textarea>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button class="btn" onclick="closeForm()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEntry()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-bg" id="detailModal">
+  <div class="modal">
+    <p class="modal-title" id="detailTitle"></p>
+    <div id="detailContent"></div>
+    <div class="form-actions">
+      <button class="btn btn-brick btn-sm" onclick="deleteFromDetail()">Eliminar</button>
+      <button class="btn btn-sm" onclick="editFromDetail()">Editar</button>
+      <button class="btn" onclick="closeDetail()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const PASSWORD = 'inmobiliaria2025';
+const STORAGE_KEY = 'comparables_sunchales_v2';
+
+let data = [], sortCol = 'fecha', sortAsc = false, editId = null, detailId = null;
+
+/* ── AUTH ── */
+function checkPwd() {
+  const v = document.getElementById('pwd-input').value;
+  if (v === PASSWORD) {
+    sessionStorage.setItem('comp_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    load(); renderTable();
+  } else {
+    document.getElementById('login-error').textContent = 'Contraseña incorrecta.';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+function logout() {
+  sessionStorage.removeItem('comp_auth');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('pwd-input').value = '';
+  document.getElementById('login-error').textContent = '';
+}
+if (sessionStorage.getItem('comp_auth') === '1') {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+}
+
+/* ── DATA ── */
+function load() {
+  try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch { data = []; }
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+/* ── BADGES ── */
+function badgeTipo(t) {
+  const map = { 'Casa':'casa','Departamento':'depto','PH':'ph','Terreno':'terreno','Local comercial':'local','Otro':'otro' };
+  const cls = map[t] || 'otro';
+  return `<span class="badge b-${cls}">${t||'—'}</span>`;
+}
+function badgeEstado(e) {
+  if (!e) return '<span class="muted">—</span>';
+  const map = { 'Muy bueno':'muybueno','Bueno':'bueno','Regular':'regular','A refaccionar':'refac' };
+  return `<span class="badge b-${map[e]||'bueno'}">${e}</span>`;
+}
+
+/* ── EXTRAS ── */
+const EXTRA_FIELDS = ['patio','pileta','garage','quincho','lavadero','baulera','gas','alarma','calefaccion','aireacond'];
+const EXTRA_LABELS = {patio:'Patio',pileta:'Pileta',garage:'Garage',quincho:'Quincho',lavadero:'Lavadero',baulera:'Baulera',gas:'Gas nat.',alarma:'Alarma',calefaccion:'Calefacción',aireacond:'Aire ac.'};
+function getExtras(e) { return EXTRA_FIELDS.filter(f => e[f]).map(f => EXTRA_LABELS[f]); }
+
+/* ── STATS ── */
+function renderStats() {
+  const f = getFiltered();
+  const total = f.length;
+  const tipos = new Set(f.map(e=>e.tipo).filter(Boolean)).size;
+  const conPrecio = f.filter(e => e.precio && e.moneda === 'USD');
+  let avgUSD = '—';
+  if (conPrecio.length) {
+    const nums = conPrecio.map(e => parseFloat(String(e.precio).replace(/[.,]/g,'').replace(/[^0-9]/g,''))).filter(n=>!isNaN(n)&&n>0);
+    if (nums.length) { const avg = nums.reduce((a,b)=>a+b,0)/nums.length; avgUSD = 'U$D ' + Math.round(avg/1000) + 'K'; }
+  }
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Comparables</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Tipos</div><div class="stat-val">${tipos}</div></div>
+    <div class="stat-card"><div class="stat-label">Precio prom. USD</div><div class="stat-val" style="font-size:1.3rem">${avgUSD}</div></div>
+    <div class="stat-card"><div class="stat-label">Con pileta</div><div class="stat-val">${f.filter(e=>e.pileta).length}</div></div>
+    <div class="stat-card"><div class="stat-label">Con garage</div><div class="stat-val">${f.filter(e=>e.garage||e.cocheras>0).length}</div></div>
+  `;
+}
+
+/* ── FILTER / SORT ── */
+function getFiltered() {
+  const q = (document.getElementById('search')||{value:''}).value.toLowerCase();
+  const tipo = (document.getElementById('filterTipo')||{value:''}).value;
+  const estado = (document.getElementById('filterEstado')||{value:''}).value;
+  return data.filter(e => {
+    const txt = [e.domicilio,e.barrio,e.fuente].join(' ').toLowerCase();
+    return (!q||txt.includes(q)) && (!tipo||e.tipo===tipo) && (!estado||e.estado===estado);
+  });
+}
+function sortBy(col) {
+  document.querySelectorAll('th').forEach(th=>th.classList.remove('sort-asc','sort-desc'));
+  if (sortCol===col) sortAsc=!sortAsc; else { sortCol=col; sortAsc=true; }
+  renderTable();
+}
+function sorted(rows) {
+  return [...rows].sort((a,b)=>{
+    let av=a[sortCol]??'', bv=b[sortCol]??'';
+    const na=parseFloat(av), nb=parseFloat(bv);
+    if (!isNaN(na)&&!isNaN(nb)) { av=na; bv=nb; }
+    if (av<bv) return sortAsc?-1:1;
+    if (av>bv) return sortAsc?1:-1;
+    return 0;
+  });
+}
+
+/* ── RENDER TABLE ── */
+function renderTable() {
+  renderStats();
+  const rows = sorted(getFiltered());
+  const tbody = document.getElementById('tbody');
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="14"><div class="empty"><strong>Sin comparables registrados</strong>Usá el botón <em>+ Nueva propiedad</em> para comenzar a cargar datos.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(e => {
+    const ex = getExtras(e);
+    const exStr = ex.slice(0,3).join(', ') + (ex.length>3?'…':'');
+    const precioStr = e.precio ? `<span class="precio-cell">${e.moneda||'USD'} ${e.precio}</span>` : '<span class="muted">—</span>';
+    return `<tr>
+      <td>${badgeTipo(e.tipo)}</td>
+      <td style="white-space:normal;max-width:180px;font-size:0.8rem">${e.domicilio||'<span class="muted">—</span>'}</td>
+      <td style="font-size:0.8rem">${e.barrio||'<span class="muted">—</span>'}</td>
+      <td style="text-align:right">${e.supTerreno?e.supTerreno+' m²':'<span class="muted">—</span>'}</td>
+      <td style="text-align:right">${e.supCubierta?e.supCubierta+' m²':'<span class="muted">—</span>'}</td>
+      <td style="text-align:center">${e.habitaciones!==''&&e.habitaciones!==null&&e.habitaciones!==undefined?e.habitaciones:'<span class="muted">—</span>'}</td>
+      <td style="text-align:center">${e.banos!==''&&e.banos!==null&&e.banos!==undefined?e.banos:'<span class="muted">—</span>'}</td>
+      <td class="extras-cell" title="${ex.join(', ')}">${exStr||'<span class="muted">—</span>'}</td>
+      <td>${badgeEstado(e.estado)}</td>
+      <td style="text-align:center;font-size:0.8rem">${e.antiguedad?e.antiguedad+' a.':'<span class="muted">—</span>'}</td>
+      <td style="text-align:right">${precioStr}</td>
+      <td style="font-size:0.78rem">${e.fecha||'<span class="muted">—</span>'}</td>
+      <td style="font-size:0.78rem;max-width:110px;overflow:hidden;text-overflow:ellipsis">${e.fuente||'<span class="muted">—</span>'}</td>
+      <td><button class="btn btn-sm" onclick="openDetail('${e.id}')">Ver</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── FORM ── */
+function openForm(id) {
+  editId = id || null;
+  document.getElementById('formTitle').textContent = id ? 'Editar propiedad' : 'Nueva propiedad comparable';
+  const e = id ? (data.find(x=>x.id===id)||{}) : {};
+  ['tipo','barrio','domicilio','fuente','fecha','supTerreno','supCubierta','frente','fondo',
+   'habitaciones','banos','toilettes','cocheras','estado','antiguedad','precio','obs'].forEach(f => {
+    const el = document.getElementById('f-'+f);
+    if (el) el.value = e[f]!==undefined ? e[f] : '';
+  });
+  const monedaEl = document.getElementById('f-moneda');
+  if (monedaEl) monedaEl.value = e.moneda||'USD';
+  EXTRA_FIELDS.forEach(f => { const el=document.getElementById('f-'+f); if(el) el.checked=!!e[f]; });
+  if (!e.fecha) { const el=document.getElementById('f-fecha'); if(el) el.value=new Date().toISOString().slice(0,10); }
+  document.getElementById('formModal').classList.add('open');
+}
+function closeForm() { document.getElementById('formModal').classList.remove('open'); }
+
+function saveEntry() {
+  const tipo = document.getElementById('f-tipo').value;
+  const domicilio = document.getElementById('f-domicilio').value.trim();
+  if (!tipo) { alert('Por favor seleccioná el tipo de propiedad.'); return; }
+  if (!domicilio) { alert('Por favor ingresá el domicilio.'); return; }
+  const entry = { id: editId||uid(), tipo, domicilio };
+  ['barrio','fuente','fecha','supTerreno','supCubierta','frente','fondo',
+   'habitaciones','banos','toilettes','cocheras','estado','antiguedad','precio','obs'].forEach(f => {
+    entry[f] = document.getElementById('f-'+f).value;
+  });
+  entry.moneda = document.getElementById('f-moneda').value;
+  entry.precioNum = parseFloat(String(entry.precio).replace(/[.,]/g,'').replace(/[^0-9]/g,''))||0;
+  EXTRA_FIELDS.forEach(f => { entry[f] = document.getElementById('f-'+f).checked; });
+  if (editId) { const i=data.findIndex(x=>x.id===editId); if(i>=0) data[i]=entry; }
+  else data.unshift(entry);
+  save(); closeForm(); renderTable();
+}
+
+/* ── DETAIL ── */
+function openDetail(id) {
+  detailId = id;
+  const e = data.find(x=>x.id===id);
+  if (!e) return;
+  document.getElementById('detailTitle').textContent = (e.tipo||'Propiedad') + '  ·  ' + (e.domicilio||'');
+  const ex = getExtras(e);
+  const tagsHtml = ex.length ? `<div class="tag-list">${ex.map(t=>`<span class="tag">${t}</span>`).join('')}</div>` : '<span class="muted" style="font-size:0.84rem">Sin extras registrados</span>';
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-grid">
+      <div><div class="det-label">Tipo</div><div class="det-val">${e.tipo||'—'}</div></div>
+      <div><div class="det-label">Barrio / Zona</div><div class="det-val">${e.barrio||'—'}</div></div>
+      <div><div class="det-label">Domicilio</div><div class="det-val">${e.domicilio||'—'}</div></div>
+      <div><div class="det-label">Fuente</div><div class="det-val">${e.fuente||'—'}</div></div>
+      <div><div class="det-label">Fecha relevamiento</div><div class="det-val">${e.fecha||'—'}</div></div>
+      <div><div class="det-label">Estado de conservación</div><div class="det-val">${e.estado||'—'}</div></div>
+      <div><div class="det-label">Antigüedad</div><div class="det-val">${e.antiguedad?e.antiguedad+' años':'—'}</div></div>
+      <div><div class="det-label">Precio de publicación</div><div class="det-val precio">${e.moneda||'USD'} ${e.precio||'—'}</div></div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Superficies y medidas</div>
+      <div class="detail-grid">
+        <div><div class="det-label">Superficie terreno</div><div class="det-val">${e.supTerreno?e.supTerreno+' m²':'—'}</div></div>
+        <div><div class="det-label">Superficie cubierta</div><div class="det-val">${e.supCubierta?e.supCubierta+' m²':'—'}</div></div>
+        <div><div class="det-label">Frente</div><div class="det-val">${e.frente?e.frente+' m':'—'}</div></div>
+        <div><div class="det-label">Fondo</div><div class="det-val">${e.fondo?e.fondo+' m':'—'}</div></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Distribución</div>
+      <div class="detail-grid">
+        <div><div class="det-label">Habitaciones</div><div class="det-val">${e.habitaciones!==''?e.habitaciones:'—'}</div></div>
+        <div><div class="det-label">Baños</div><div class="det-val">${e.banos!==''?e.banos:'—'}</div></div>
+        <div><div class="det-label">Toilettes</div><div class="det-val">${e.toilettes!==''?e.toilettes:'—'}</div></div>
+        <div><div class="det-label">Cocheras</div><div class="det-val">${e.cocheras!==''?e.cocheras:'—'}</div></div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Características adicionales</div>
+      ${tagsHtml}
+    </div>
+
+    ${e.obs ? `<div class="detail-section"><div class="detail-section-title">Observaciones</div><p style="font-size:0.88rem;line-height:1.6;color:var(--ink)">${e.obs}</p></div>` : ''}
+  `;
+  document.getElementById('detailModal').classList.add('open');
+}
+function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+function deleteFromDetail() {
+  if (!confirm('¿Eliminar este comparable? Esta acción no se puede deshacer.')) return;
+  data = data.filter(x=>x.id!==detailId);
+  save(); closeDetail(); renderTable();
+}
+function editFromDetail() { const id=detailId; closeDetail(); openForm(id); }
+
+/* ── EXPORT ── */
+function exportCSV() {
+  const cols = ['tipo','domicilio','barrio','fuente','fecha','supTerreno','supCubierta','frente','fondo',
+    'habitaciones','banos','toilettes','cocheras',...EXTRA_FIELDS,'estado','antiguedad','moneda','precio','obs'];
+  const labels = ['Tipo','Domicilio','Barrio','Fuente','Fecha','Sup.Terreno m2','Sup.Cubierta m2','Frente m','Fondo m',
+    'Habitaciones','Baños','Toilettes','Cocheras','Patio','Pileta','Garage','Quincho','Lavadero','Baulera','Gas','Alarma','Calefacción','Aire Ac.',
+    'Estado','Antigüedad años','Moneda','Precio','Observaciones'];
+  const rows = data.map(e => cols.map(c => {
+    const v = e[c]; if (v===undefined||v===null) return '';
+    if (typeof v==='boolean') return v?'Sí':'No';
+    return String(v).replace(/;/g,',').replace(/\n/g,' ');
+  }).join(';'));
+  const csv = [labels.join(';'),...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download = 'comparables_sunchales_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+/* ── CLOSE ON BG CLICK ── */
+document.getElementById('formModal').addEventListener('click', function(e){ if(e.target===this) closeForm(); });
+document.getElementById('detailModal').addEventListener('click', function(e){ if(e.target===this) closeDetail(); });
+
+/* ── INIT ── */
+if (sessionStorage.getItem('comp_auth')==='1') { load(); renderTable(); }
+</script>
+</body>
+</html>
